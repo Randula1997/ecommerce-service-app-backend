@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { IsString, IsNumber, IsArray, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { IsObject } from '@nestjs/class-validator';
@@ -17,23 +18,23 @@ class ItemDetailDto {
 }
 
 class ShippingAddressDto {
-    @IsString()
-    readonly location: string
+  @IsString()
+  readonly location: string;
 
-    @IsString()
-    readonly firstName: string
+  @IsString()
+  readonly firstName: string;
 
-    @IsString()
-    readonly lastName: string
+  @IsString()
+  readonly lastName: string;
 
-    @IsNumber()
-    readonly contactNumber: number
+  @IsNumber()
+  readonly contactNumber: number;
 
-    @IsString()
-    readonly addressLine1: string
+  @IsString()
+  readonly addressLine1: string;
 
-    @IsString()
-    readonly addressLine2: string
+  @IsString()
+  readonly addressLine2: string;
 }
 
 export class CreateOrderDto {
