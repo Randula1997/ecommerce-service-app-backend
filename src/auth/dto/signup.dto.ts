@@ -1,6 +1,10 @@
 /* eslint-disable prettier/prettier */
 import { IsEmail, IsIn, IsNotEmpty, IsString, MaxLength, MinLength,  } from "@nestjs/class-validator"
-import { Role } from "../schemas/user.schema";
+
+export enum Role {
+    User = 'user',
+    ServiceProvider = 'serviceProvider',
+}
 
 export class SignUpDto{
     @IsNotEmpty({ message: 'Name must not be empty' })
@@ -19,6 +23,6 @@ export class SignUpDto{
 
     @IsNotEmpty({ message: 'Role must not be empty' })
     @IsString({ message: 'Role must be a string' })
-    @IsIn([Role.User, Role.Store], { message: 'Role must be either "user" or "store"' })
+    @IsIn([Role.User, Role.ServiceProvider], { message: 'Role must be either "user" or "service provider"' })
     readonly role: string;
 }

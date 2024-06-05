@@ -1,52 +1,28 @@
-import { IsString, IsNumber, IsArray, ValidateNested } from 'class-validator';
+/* eslint-disable prettier/prettier */
+import { IsString, IsNumber, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
-import { IsObject } from '@nestjs/class-validator';
-
-class ItemDetailDto {
-  @IsString()
-  readonly color: string;
-
-  @IsString()
-  readonly size: string;
-
-  @IsNumber()
-  readonly price: number;
-
-  @IsNumber()
-  readonly quantity: number;
-}
-
-class ShippingAddressDto {
-    @IsString()
-    readonly location: string
-
-    @IsString()
-    readonly firstName: string
-
-    @IsString()
-    readonly lastName: string
-
-    @IsNumber()
-    readonly contactNumber: number
-
-    @IsString()
-    readonly addressLine1: string
-
-    @IsString()
-    readonly addressLine2: string
-}
 
 export class CreateOrderDto {
-  @IsArray()
-  @ValidateNested({ each: true })
-  @Type(() => ItemDetailDto)
-  readonly items: ItemDetailDto[];
+  @IsString()
+  readonly taskCategory: string;
 
-  @IsNumber()
-  readonly totalPrice: number;
+  @IsString()
+  readonly subCategory: string;
 
-  @IsObject()
-  @ValidateNested({ each: true })
-  @Type(() => ShippingAddressDto)
-  readonly shippingAddress: object;
+  @IsString()
+  readonly name: string;
+
+  @IsString()
+  readonly address: string
+
+  @IsString()
+  readonly city: string
+  
+  @IsNumber() 
+  readonly contactNumber: number
+
+  @IsDate()
+  @Type(() => Date) 
+  readonly date: Date;
 }
+

@@ -1,5 +1,4 @@
 /* eslint-disable prettier/prettier */
-export class FilterProductDTO {
+export class FilterTaskDTO {
     search: string;
-    category: string;
 }

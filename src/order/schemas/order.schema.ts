@@ -1,52 +1,29 @@
-import { Document } from 'mongoose';
+/* eslint-disable prettier/prettier */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
-class ItemDetail {
+
+Schema()
+export class OrderDetail {
   @Prop()
-  color: string;
+  readonly serviceCategory: string;
 
   @Prop()
-  size: string;
+  readonly subCategory: string;
 
   @Prop()
-  price: number;
+  readonly name: string;
 
   @Prop()
-  quantity: number;
+  readonly address: string
+
+  @Prop()
+  readonly city: string
+  
+  @Prop()
+  readonly contactNumber: number
+
+  @Prop()
+  readonly date: Date
 }
 
-class ShippingAddress {
-  @Prop()
-  location: string;
-
-  @Prop()
-  firstName: string;
-
-  @Prop()
-  lastName: string;
-
-  @Prop()
-  contactNumber: number;
-
-  @Prop()
-  addressLine1: string;
-
-  @Prop()
-  addressLine2: string;
-}
-
-export type OrderDocument = Order & Document;
-
-@Schema()
-export class Order {
-  @Prop({ type: [ItemDetail] })
-  items: ItemDetail[];
-
-  @Prop()
-  totalPrice: number;
-
-  @Prop({ type: ShippingAddress })
-  shippingAddress: ShippingAddress;
-}
-
-export const OrderSchema = SchemaFactory.createForClass(Order);
+export const OrderSchema = SchemaFactory.createForClass(OrderDetail);

@@ -1,11 +1,14 @@
+/* eslint-disable prettier/prettier */
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { OrderService } from './order.service';
 import { OrderController } from './order.controller';
-import { Order, OrderSchema } from './schemas/order.schema';
+import { OrderDetail, OrderSchema } from './schemas/order.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }])],
+  imports: [
+    MongooseModule.forFeature([{ name: OrderDetail.name, schema: OrderSchema }]),
+  ],
   controllers: [OrderController],
   providers: [OrderService],
 })

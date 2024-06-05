@@ -8,10 +8,12 @@ import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserSchema } from './schemas/user.schema';
+import { ServiceProviderSchema } from './schemas/serviceProvider.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{name: 'User', schema: UserSchema}]),
+    MongooseModule.forFeature([{name: 'ServiceProvider', schema: ServiceProviderSchema}]),
     PassportModule.register({defaultStrategy: 'jwt'}),
     JwtModule.register({
         secret: 'abc123',
