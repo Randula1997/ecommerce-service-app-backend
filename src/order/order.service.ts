@@ -3,20 +3,20 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { OrderDetail } from './schemas/order.schema';
+import { Orders } from './schemas/order.schema';
 
 @Injectable()
 export class OrderService {
   constructor(
-    @InjectModel('OrderDetail') private readonly orderModel: Model<OrderDetail>,
+    @InjectModel('Orders') private readonly orderModel: Model<Orders>,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto): Promise<OrderDetail> {
+  async create(createOrderDto: CreateOrderDto): Promise<Orders> {
     const createdOrder = new this.orderModel(createOrderDto);
-    return createdOrder.save();
+    return createdOrder.save(); 
   }
 
-  async findAll(): Promise<OrderDetail[]> {
+  async findAll(): Promise<Orders[]> {
     return this.orderModel.find().exec();
   }
 }
