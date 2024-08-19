@@ -1,100 +1,54 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable prettier/prettier */
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { AuthPayloadDto } from './dto/auth.dto';
-import { JwtService } from '@nestjs/jwt';
-import { User } from './schemas/user.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { JwtService } from '@nestjs/jwt';
+import { User, UserDocument } from './schemas/user.schema';
+import { RegisterUserDto, LoginUserDto } from './dto/auth.dto';
 import * as bcrypt from 'bcryptjs';
-import { SignUpDto } from './dto/signup.dto';
-import { LoginDto } from './dto/login.dto';
-import { ServiceProvider } from './schemas/serviceProvider.schema';
-
-const fakeUsers = [
-    {
-        id: 1,
-        username: 'adam',
-        password: 'password'
-    },
-    {
-        id: 2,
-        username: 'jack',
-        password: 'password123'
-    }
-]
 
 @Injectable()
 export class AuthService {
-    constructor(
-        @InjectModel(User.name) 
-        private userModel: Model<User>,
-        @InjectModel(ServiceProvider.name) 
-        private serviceProviderModel: Model<ServiceProvider>,
-        private jwtService: JwtService 
-    ) {}
+  constructor(
+    @InjectModel(User.name) private userModel: Model<UserDocument>,
+    private jwtService: JwtService,
+  ) {}
 
-    validateUser({ username, password }: AuthPayloadDto) {
-        const findUser = fakeUsers.find((user) => user.username === username);
-        if (!findUser) return null;
-        if (password === findUser.password) {
-            const { password, ...user } = findUser;
-            return this.jwtService.sign(user)
-        }
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.userModel.findOne({ email });
+    if (user && await bcrypt.compare(pass, user.password)) {
+      const { password, ...result } = user.toObject(); // Make sure to include the role
+      return result;
+    }
+    return null;
+  }
+
+  async login(loginUserDto: LoginUserDto) {
+    const { email, password } = loginUserDto;
+    const user = await this.validateUser(email, password);
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
     }
 
-    async signUp(signUpDto: SignUpDto): Promise<{ token: string}> {
-        const { name, email, password, role } = signUpDto;  
-        let user;
-        try {
-            const existingService = await this.serviceProviderModel.findOne({ email });
-            const existingUser = await this.userModel.findOne({ email });
-            if (existingUser || existingService) {
-                throw new Error('Email is already registered');
-            }
-            const hashedPassword = await bcrypt.hash(password, 10);
-            
-            if (role === 'user') {
-              user = await this.userModel.create({ name, email, password: hashedPassword });
-            } else if (role === 'serviceProvider') {
-              user = await this.serviceProviderModel.create({ name, email, password: hashedPassword });
-            } else {
-              throw new Error('Invalid role');
-            }
-      
-            const token = this.jwtService.sign({ id: user.id });
-            return { token };
-          } catch (error) {
-            // Handle specific errors
-            if (error.message.includes('duplicate key error')) {
-                throw new Error('Email is already registered');
-            }
-            
-            throw new Error('Error creating user');
-          }
-    }
+    const payload = { username: user.username, sub: user._id, role: user.role };
+    return {
+      access_token: this.jwtService.sign(payload),
+      role: user.role, 
+    };
+  }
 
-    async login(loginDto: LoginDto): Promise<{ token: string }> {
-        const { email, password } = loginDto;
+  async register(registerUserDto: RegisterUserDto): Promise<User> {
+    const user = new this.userModel(registerUserDto);
+    user.password = await bcrypt.hash(user.password, 10); // Hash the password before saving
+    return user.save();
+  }
 
-        // Find user in both UserModel and ServiceProviderModel
-        const user = await Promise.any([
-        this.userModel.findOne({ email }).exec(),
-        this.serviceProviderModel.findOne({ email }).exec(),
-        ]).catch(() => null);
+  async getAllServiceProviders(): Promise<User[]> {
+    return this.userModel.find({ role: 'service_provider' }).exec();
+  }
 
-        if (!user) {
-        throw new UnauthorizedException('Invalid email or password');
-        }
+  async getAllUsers(): Promise<User[]>{
+    return this.userModel.find({ role: 'user'}).exec();
+  }
 
-        const isPasswordMatched = await bcrypt.compare(password, user.password);
-
-        if (!isPasswordMatched) {
-        throw new UnauthorizedException('Invalid email or password');
-        }
-
-        const token = this.jwtService.sign({ id: user._id });
-
-        return { token };
-        }
 }
