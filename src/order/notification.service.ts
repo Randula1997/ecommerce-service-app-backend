@@ -16,7 +16,6 @@ export class NotificationService {
       },
     });
 
-    // this.twilioClient = twilio('ACac3364d22c335308eb1a98e687457502', 'ac6d9eff55a22106d33a5c4fc935ee2c');
   }
 
   async sendEmail(to: string, subject: string, text: string) {
