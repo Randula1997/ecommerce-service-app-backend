@@ -1,8 +1,10 @@
 /* eslint-disable prettier/prettier */
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Post, Body, Get, Patch, Param, UseGuards, Put } from '@nestjs/common';
 import { OrderService } from './order.service';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { CreateOrderDto, OrderStatus } from './dto/create-order.dto';
 import { Orders } from './schemas/order.schema';
+import { Roles, RolesGuard } from 'src/auth/guards/role.guard';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('orders')
 export class OrderController {
@@ -13,8 +15,30 @@ export class OrderController {
     return this.orderService.create(createOrderDto);
   }
 
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get()
+  @Roles('admin')
   async findAll(): Promise<Orders[]> {
     return this.orderService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch(':id/status')
+  @Roles('admin')
+  async updateStatus(
+    @Param('id') id: string,
+    @Body('status') status: OrderStatus,
+  ): Promise<Orders> {
+    return this.orderService.updateStatus(id, status);
+  }
+
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Put(':orderId/assign/:serviceProviderId')
+  @Roles('admin')
+  async assignOrderToServiceProvider(
+    @Param('orderId') orderId: string,
+    @Param('serviceProviderId') serviceProviderId: string,
+  ): Promise<Orders> {
+    return this.orderService.assignOrderToServiceProvider(orderId, serviceProviderId);
   }
 }

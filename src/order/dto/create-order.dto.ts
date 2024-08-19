@@ -1,7 +1,12 @@
 /* eslint-disable prettier/prettier */
-import { IsString, IsNumber, IsDate } from 'class-validator';
+import { IsString, IsNumber, IsDate, IsEnum, IsEmail } from 'class-validator';
 import { Type } from 'class-transformer';
 
+export enum OrderStatus {
+  PENDING = 'pending',
+  APPROVED = 'approved',
+  CANCELLED = 'cancelled',
+}
 export class CreateOrderDto {
   @IsString()
   readonly taskCategory: string;
@@ -21,8 +26,14 @@ export class CreateOrderDto {
   @IsNumber() 
   readonly contactNumber: number
 
+  @IsEmail()
+  readonly email: string
+
   @IsDate()
   @Type(() => Date) 
   readonly date: Date;
+
+  @IsEnum(OrderStatus)
+  readonly status: OrderStatus = OrderStatus.PENDING;
 }
 

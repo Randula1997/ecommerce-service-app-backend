@@ -4,6 +4,7 @@ import { IsEmail, IsIn, IsNotEmpty, IsString, MaxLength, MinLength,  } from "@ne
 export enum Role {
     User = 'user',
     ServiceProvider = 'serviceProvider',
+    Admin = 'admin'
 }
 
 export class SignUpDto{
@@ -23,6 +24,6 @@ export class SignUpDto{
 
     @IsNotEmpty({ message: 'Role must not be empty' })
     @IsString({ message: 'Role must be a string' })
-    @IsIn([Role.User, Role.ServiceProvider], { message: 'Role must be either "user" or "service provider"' })
+    @IsIn([Role.User, Role.ServiceProvider, Role.Admin], { message: 'Role must be either "user" , "service provider" or "admin"' })
     readonly role: string;
 }
