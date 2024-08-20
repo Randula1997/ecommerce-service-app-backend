@@ -11,8 +11,8 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow only specified methods
     allowedHeaders: ['Content-Type'], // Allow only specified headers
   });
-
+  const port = process.env.PORT
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(8080);
+  await app.listen(port);
 }
 bootstrap();
