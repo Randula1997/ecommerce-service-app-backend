@@ -11,8 +11,10 @@ async function bootstrap() {
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow only specified methods
     allowedHeaders: ['Content-Type'], // Allow only specified headers
   });
-  const port = process.env.PORT
+  const port = process.env.PORT || 8080;
   app.useGlobalPipes(new ValidationPipe());
-  await app.listen(port);
+  await app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
+  });
 }
 bootstrap();
