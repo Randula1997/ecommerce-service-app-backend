@@ -57,13 +57,12 @@ COPY --chown=node:node --from=build /usr/src/app/node_modules ./node_modules
 COPY --chown=node:node --from=build /usr/src/app/dist ./dist
 
 # Set the environment variable
-ENV PORT 8080
 ENV DB_URL mongodb+srv://randularj97:Iqkk1PlWBSYik2EE@service-app.ksbmhdm.mongodb.net/?retryWrites=true&w=majority&appName=service-app
 ENV JWT_SECRET topsecretkeyrandulabasnayaka
 ENV JWT_EXPIRE 2d
 
 # Expose the port
-EXPOSE 8080
+EXPOSE 5000
 
 # Start the server using the production build
 CMD [ "node", "dist/main.js" ]
