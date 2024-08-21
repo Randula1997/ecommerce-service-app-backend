@@ -11,6 +11,10 @@ WORKDIR /usr/src/app
 COPY --chown=node:node package.json ./
 COPY --chown=node:node package-lock.json ./
 
+# Install nestjs which is required for bulding the Nest.js project.
+# (Skip for Node.js Projects)
+RUN npm install -g @nestjs/cli
+
 # Install app dependencies
 RUN npm install
 
