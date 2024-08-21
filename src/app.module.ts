@@ -14,7 +14,7 @@ import { OrderModule } from './order/order.module';
       envFilePath: '.env',
       isGlobal: true
     }),
-    MongooseModule.forRoot(process.env.DB_URL),
+    MongooseModule.forRoot("mongodb+srv://randularj97:Iqkk1PlWBSYik2EE@service-app.ksbmhdm.mongodb.net/?retryWrites=true&w=majority&appName=service-app"),
     TaskModule,
     AuthModule,
     OrderModule

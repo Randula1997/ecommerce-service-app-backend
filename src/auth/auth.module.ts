@@ -12,7 +12,7 @@ import { AuthController } from './auth.controller';
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     PassportModule,
     JwtModule.register({
-      secret: process.env.JWT_SECRET,
+      secret: "topsecretkeyrandulabasnayaka",
       signOptions: { expiresIn: '60m' },
     }),
   ],
