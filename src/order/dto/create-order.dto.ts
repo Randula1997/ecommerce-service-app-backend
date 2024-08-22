@@ -26,7 +26,6 @@ export class CreateOrderDto {
   @IsNumber() 
   readonly contactNumber: number
 
-  @IsEmail()
   readonly email: string
 
   @IsDate()
