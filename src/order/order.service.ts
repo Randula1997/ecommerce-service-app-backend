@@ -19,7 +19,6 @@ export class OrderService {
     const createdOrder = new this.orderModel(createOrderDto);
     const order = await createdOrder.save();
     // const user = await this.userModel.findOne({ email: createOrderDto.email });
-    console.log('order.email', order.email)
     if (order.email) { 
       await this.notificationService.sendEmail(
           order.email,
