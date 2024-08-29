@@ -4,7 +4,9 @@ import { RegisterUserDto, LoginUserDto } from './dto/auth.dto';
 import { Roles, RolesGuard } from './guards/role.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { SignUpDto } from './dto/signup.dto';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -22,6 +24,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('serviceProviders')
   @Roles('admin')
+  @ApiBearerAuth()
   async getAllServiceProviders() {
     return this.authService.getAllServiceProviders();
   }
@@ -29,6 +32,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('users')
   @Roles('admin')
+  @ApiBearerAuth()
   async getAllUsers() {
     return this.authService.getAllUsers();
   }

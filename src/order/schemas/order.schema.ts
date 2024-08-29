@@ -19,8 +19,14 @@ export class Orders {
   @Prop({ required: true })
   name: string;
 
-  @Prop({ required: true })
-  address: string
+  @Prop()
+  address?: string;
+
+  @Prop()
+  latitude?: number;
+
+  @Prop()
+  longitude?: number;
 
   @Prop({ required: true })
   city: string
@@ -39,6 +45,9 @@ export class Orders {
 
   @Prop({ type: Types.ObjectId, ref: User.name })
   serviceProviderId: Types.ObjectId;
+
+  @Prop({ type: Types.ObjectId, ref: User.name })
+  userId?: Types.ObjectId;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Orders);

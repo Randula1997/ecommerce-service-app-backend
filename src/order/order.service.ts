@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateOrderDto, OrderStatus } from './dto/create-order.dto';
@@ -15,7 +15,15 @@ export class OrderService {
     private readonly notificationService: NotificationService,
   ) {}
 
-  async create(createOrderDto: CreateOrderDto): Promise<Orders> {
+  async create(createOrderDto: CreateOrderDto, user?: UserDocument): Promise<Orders> {
+    if (!createOrderDto.address && (!createOrderDto.latitude || !createOrderDto.longitude)) {
+      throw new BadRequestException('Either an address or both latitude and longitude must be provided.');
+    }
+    
+    if (user) {
+      createOrderDto.userId = user._id;  
+    }
+    
     const createdOrder = new this.orderModel(createOrderDto);
     const order = await createdOrder.save();
     // const user = await this.userModel.findOne({ email: createOrderDto.email });
@@ -39,8 +47,20 @@ export class OrderService {
     return this.orderModel.find().exec();
   }
 
+  async findOrdersByUser(userId: string): Promise<Orders[]> {
+    return this.orderModel.find({ userId }).exec();
+  }
+
+  async findOrdersByServiceProvider(serviceProviderId: string): Promise<Orders[]> {
+    return this.orderModel.find({ serviceProviderId }).exec();
+  }
+
   async updateStatus(orderId: string, status: OrderStatus): Promise<Orders> {
     const order = await this.orderModel.findByIdAndUpdate(orderId, { status }, { new: true }).exec();
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
 
     if (status === OrderStatus.APPROVED) {
       await this.notificationService.sendEmail(
@@ -54,13 +74,11 @@ export class OrderService {
   }
 
   async assignOrderToServiceProvider(orderId: string, serviceProviderId: string): Promise<Orders> {
-    // Check if the service provider is a registered user
     const serviceProvider = await this.userModel.findById(serviceProviderId);
     if (!serviceProvider) {
       throw new NotFoundException('Service provider not found');
     }
 
-    // Update the order with the service provider's ID and change status to APPROVED
     const order = await this.orderModel.findByIdAndUpdate(
       orderId,
       { serviceProviderId, status: OrderStatus.APPROVED },

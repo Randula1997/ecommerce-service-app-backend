@@ -3,7 +3,9 @@ import { Controller, Post, Get, Put, Delete, Body, Param, Query, NotFoundExcepti
 import { TaskService } from './task.service';
 import { FilterTaskDTO } from './dto/filter-task.dto';
 import { CreateTaskDTO } from './dto/create-task.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Tasks')
 @Controller('task')
 export class TaskController {
     constructor(private taskService: TaskService) { }
