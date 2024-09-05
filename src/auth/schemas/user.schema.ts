@@ -29,6 +29,15 @@ export class User {
   @Prop()
   address: string;
 
+  @Prop()
+  profilePicture?: string; 
+
+  @Prop()
+  jobRole?: string; 
+
+  @Prop()
+  city?: string;
+
   @Prop({ default: Date.now })
   createdAt: Date;
 
