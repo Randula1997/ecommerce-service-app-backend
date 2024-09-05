@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
@@ -6,6 +6,7 @@ import { User, UserDocument } from './schemas/user.schema';
 import { LoginUserDto } from './dto/auth.dto';
 import * as bcrypt from 'bcryptjs';
 import { SignUpDto } from './dto/signup.dto';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @Injectable()
 export class AuthService {
@@ -41,13 +42,14 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const payload = { username: user.username, sub: user._id, role: user.role };
+    const payload = { username: user.name, sub: user._id, role: user.role };
 
     return {
       access_token: this.jwtService.sign(payload),
       role: user.role,
       userId: user._id,
-      userEmail: user.email
+      userEmail: user.email,
+      userName: user.name
     };
   }
 
@@ -68,5 +70,32 @@ export class AuthService {
 
   async getAllUsers(): Promise<User[]> {
     return this.userModel.find({ role: 'user' }).exec();
+  }
+
+  async getUser(id: string): Promise<User> {
+    const user = await this.userModel.findById(id).exec();
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user;
+  }
+
+  async updateUser(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const user = await this.userModel.findById(id);
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Only allow updates if the user is either a service provider or a regular user
+    if (user.role === 'service_provider' || user.role === 'user') {
+      Object.assign(user, updateUserDto);
+      user.updatedAt = new Date(); // Update the timestamp
+      return user.save();
+    } else {
+      throw new UnauthorizedException('You do not have permission to update this user');
+    }
   }
 }

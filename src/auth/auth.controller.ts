@@ -1,10 +1,11 @@
-import { Controller, Post, Body, Get, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, UseGuards, Patch, Param } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto, LoginUserDto } from './dto/auth.dto';
 import { Roles, RolesGuard } from './guards/role.guard';
 import { JwtAuthGuard } from './guards/jwt.guard';
 import { SignUpDto } from './dto/signup.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from './dto/updateUser.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -21,9 +22,7 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
-  @UseGuards(JwtAuthGuard, RolesGuard)
   @Get('serviceProviders')
-  @Roles('admin')
   @ApiBearerAuth()
   async getAllServiceProviders() {
     return this.authService.getAllServiceProviders();
@@ -35,5 +34,19 @@ export class AuthController {
   @ApiBearerAuth()
   async getAllUsers() {
     return this.authService.getAllUsers();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('user/:id')
+  @ApiBearerAuth()
+  async getUser(@Param('id') id: string) {
+    return this.authService.getUser(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('update/:id')
+  @ApiBearerAuth()
+  async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.authService.updateUser(id, updateUserDto);
   }
 }
