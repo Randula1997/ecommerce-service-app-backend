@@ -4,6 +4,7 @@ import {
   IsIn,
   IsNotEmpty,
   IsString,
+  Matches,
   MaxLength,
   MinLength,
 } from '@nestjs/class-validator';
@@ -31,8 +32,12 @@ export class SignUpDto {
   })
   @IsNotEmpty({ message: 'Password must not be empty' })
   @IsString({ message: 'Password must be a string' })
-  @MinLength(6, { message: 'Password must be at least 6 characters long' })
-  @MaxLength(12, { message: 'Password must be at most 12 characters long' })
+  @MinLength(8)
+  @MaxLength(12)
+  @Matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d@$!%*?&]{8,12}$/, {
+    message:
+      'Password must be 8-12 characters long, include at least one lowercase letter, one uppercase letter, and one number.',
+  })
   readonly password: string;
 
   @ApiProperty({
