@@ -62,7 +62,7 @@ export class OrderService {
       throw new NotFoundException('Order not found');
     }
 
-    if (status === OrderStatus.APPROVED) {
+    if (status === OrderStatus.APPROVED && order.email) {
       await this.notificationService.sendEmail(
         order.email,
           'New Order has been Approved',
