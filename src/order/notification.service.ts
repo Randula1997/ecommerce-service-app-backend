@@ -4,7 +4,7 @@ import * as twilio from 'twilio';
 
 @Injectable()
 export class NotificationService {
-  private transporter: { sendMail: (arg0: { from: string; to: string; subject: string; text: string; }) => any; };
+  private transporter: { sendMail: (arg0: { from: string; to: string; subject: string; text?: string; html?: string; }) => any; };
   private twilioClient: import("twilio/lib/rest/Twilio");
 
   constructor() {
@@ -18,12 +18,12 @@ export class NotificationService {
 
   }
 
-  async sendEmail(to: string, subject: string, text: string) {
+  async sendEmail(to: string, subject: string, htmlContent: string) {
     const mailOptions = {
       from: 'taskerrs82@gmail.com',
       to,
       subject,
-      text,
+      html: htmlContent,
     };
     
     await this.transporter.sendMail(mailOptions);
