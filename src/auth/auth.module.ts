@@ -6,6 +6,7 @@ import { AuthService } from './auth.service';
 import { UserSchema, User } from './schemas/user.schema';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { AuthController } from './auth.controller';
+import { NotificationService } from 'src/order/notification.service';
 
 @Module({
   imports: [
@@ -17,7 +18,7 @@ import { AuthController } from './auth.controller';
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, NotificationService],
   exports: [AuthService, MongooseModule],
 })
 export class AuthModule {}

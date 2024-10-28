@@ -49,4 +49,17 @@ export class AuthController {
   async updateUser(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.authService.updateUser(id, updateUserDto);
   }
+
+  @Post('forgot-password')
+  async forgotPassword(@Body('email') email: string) {
+    return this.authService.sendPasswordResetLink(email);
+  }
+
+  @Patch('reset-password/:token')
+  async resetPassword(
+    @Param('token') token: string,
+    @Body('password') password: string,
+  ) {
+    return this.authService.resetPassword(token, password);
+  }
 }
