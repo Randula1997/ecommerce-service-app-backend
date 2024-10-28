@@ -62,6 +62,9 @@ ENV NODE_ENV production
 ENV DB_URL mongodb+srv://randularj97:Iqkk1PlWBSYik2EE@service-app.ksbmhdm.mongodb.net/?retryWrites=true&w=majority&appName=service-app
 ENV JWT_SECRET topsecretkeyrandulabasnayaka
 ENV JWT_EXPIRE 2d
+ENV EMAIL_USER=taskerrs82@gmail.com
+ENV EMAIL_PASSWORD="exvg yrii htsf cvhg"
+ENV FRONTEND_URL=https://www.taskerrs.com/
 
 # Expose the port
 EXPOSE 8080

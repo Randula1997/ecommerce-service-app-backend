@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { JwtService } from '@nestjs/jwt';
@@ -7,12 +7,15 @@ import { LoginUserDto } from './dto/auth.dto';
 import * as bcrypt from 'bcryptjs';
 import { SignUpDto } from './dto/signup.dto';
 import { UpdateUserDto } from './dto/updateUser.dto';
+import * as nodemailer from 'nodemailer';
+import { NotificationService } from 'src/order/notification.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectModel(User.name) private userModel: Model<UserDocument>,
     private jwtService: JwtService,
+    private readonly notificationService: NotificationService,
   ) {}
   
   saltOrRounds: number = 10;
@@ -96,6 +99,43 @@ export class AuthService {
       return user.save();
     } else {
       throw new UnauthorizedException('You do not have permission to update this user');
+    }
+  }
+
+  async sendPasswordResetLink(email: string): Promise<any> {
+    const user = await this.userModel.findOne({ email });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const token = this.jwtService.sign({ id: user._id }, { expiresIn: '1h' });
+
+    const resetLink = `${process.env.FRONTEND_URL}/reset-password/${token}`;
+
+    await this.notificationService.sendEmail(
+      email,
+      'Password Reset Link',
+      `<p>Click the link to reset your password: <a href="${resetLink}">Reset Password</a></p>`,
+    );
+
+    return { message: 'Password reset link sent to your email.' };
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<any> {
+    try {
+      const payload = this.jwtService.verify(token);
+      const user = await this.userModel.findById(payload.id);
+      if (!user) {
+        throw new NotFoundException('User not found');
+      }
+
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+      user.password = hashedPassword;
+      await user.save();
+
+      return { message: 'Password reset successfully' };
+    } catch (error) {
+      throw new BadRequestException('Invalid or expired token');
     }
   }
 }

@@ -18,7 +18,7 @@ async function bootstrap() {
   SwaggerModule.setup('api', app, document);
   
   app.enableCors({
-    origin: ['https://www.taskerrs.com/'], // Allow requests from this origin
+    origin: '*', // Allow requests from this origin
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'], // Allow only specified methods
     allowedHeaders: ['Content-Type', 'Authorization'], // Allow only specified headers
     credentials: true

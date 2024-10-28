@@ -11,8 +11,8 @@ export class NotificationService {
     this.transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'taskerrs82@gmail.com',
-        pass: 'exvg yrii htsf cvhg',
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD,
       },
     });
 
