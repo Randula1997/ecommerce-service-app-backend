@@ -37,6 +37,9 @@ export class Orders {
   @Prop()
   email: string
 
+  @Prop()
+  description: string
+
   @Prop({ required: true })
   date: Date
 

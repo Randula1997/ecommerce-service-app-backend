@@ -58,5 +58,8 @@ export class CreateOrderDto {
 
   @IsOptional()
   userId?: string;
+
+  @IsOptional()
+  description?: string;
 }
 
